@@ -1,0 +1,61 @@
+# model
+model_type: flem
+alpha: 0.01
+beta: 0.01
+le_threshold: 0.2
+threshold: 0.5
+le_hidden_dim: 128
+threshold_first: 0.6
+threshold_second: 0.4
+
+# train_set
+# train_type: base_train
+# train_type: self_train
+train_type: pst_train
+device: 0
+partial: true
+
+task_name: flem_${train_type}_alpha${alpha}_beta${beta}_le_threshold${le_threshold}_${threshold_first}_${threshold_second}_partial
+
+class_num: 96   # 96  54 
+
+max_seq_len: 256
+
+data_type: CCKS     # AAPD  CCKS
+data_dir: data/${data_type}
+
+# plm_dir: /data2/jfren/PLM_Model/bert-base-cased
+plm_dir: /data2/jfren/PLM_Model/bert-base-chinese
+
+train_filepath: ${data_dir}/raw_data/train.jsonl
+# train_filepath: ${data_dir}/lose_real/train_0.1.jsonl
+# train_filepath: ${data_dir}/lose_fake/train_0.1.jsonl
+unlabel_filepath: ${data_dir}/raw_data/unlabel.jsonl
+dev_filepath: ${data_dir}/raw_data/dev.jsonl
+test_filepath: ${data_dir}/raw_data/test.jsonl
+
+output_dir: outputs/${data_type}
+task_dir: ${output_dir}/${task_name}
+label2id_filepath: ${data_dir}/label2id.json
+
+# training
+load_train_data: true
+load_test_data: true
+load_dev_data: true
+final_eval_model_filepath: ${task_dir}/ckpt/FLEM.best.pth
+best_eval_model_filepath: outputs/CCKS/flem_base_train_alpha0.01_beta0.01_le_threshold0.2/ckpt/FLEM.best.pth
+debug_mode: false
+warmup_proportion: 0.1
+gradient_accumulation_steps: 1
+
+random_seed: 1227
+self_training_num_epochs: 20
+num_epochs: 20
+num_early_stop: 40
+train_batch_size: 8
+eval_batch_size: 8
+learning_rate: !!float 2e-5
+save_best_ckpt: true
+
+# logging
+only_master_logging: true
